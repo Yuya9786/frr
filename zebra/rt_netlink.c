@@ -1849,6 +1849,18 @@ static int netlink_neigh_update(int cmd, int ifindex, void *addr, char *lla,
 	if (lla)
 		nl_attr_put(&req.n, sizeof(req), NDA_LLADDR, lla, llalen);
 
+	if (IS_ZEBRA_DEBUG_KERNEL) {
+		if (cmd == RTM_NEWNEIGH)
+			zlog_debug(
+			"%s: Add/Update neighbor %pIA MAC %pEA intf %u",
+			__func__, addr, lla, ifindex);
+
+		else if (cmd == RTM_DELNEIGH)
+			zlog_debug(
+			"%s: Delete neighbor %pIA MAC %pEA intf %u",
+			__func__, addr, lla, ifindex);
+	}
+
 	return netlink_talk(netlink_talk_filter, &req.n, &zns->netlink_cmd, zns,
 			    false);
 }
